@@ -1,7 +1,7 @@
 # user-image-service
 Service is used to do User Creation, Login and upload images to the given User Profile!
 
-[Imgur API] is used to upload, read the images !
+[Imgur API](https://apidocs.imgur.com/) is used to upload, read the images !
 
 Postman collection is available to run all of the endpoints and explore the complete suite of endpoints related to,
 
