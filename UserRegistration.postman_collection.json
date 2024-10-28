@@ -193,6 +193,37 @@
 			"response": []
 		},
 		{
+			"name": "image/{id} delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{userJwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/image/{{imageDeleteHash}}/{{imageHash}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"image",
+						"{{imageDeleteHash}}",
+						"{{imageHash}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Image Upload",
 			"event": [
 				{
@@ -218,10 +249,12 @@
 							"",
 							"var imageHash = res.id;",
 							"",
+							"var imageDeleteHash = res.deletehash;",
 							"tests['Returns 7 char alphanumeric id'] = /^[a-z0-9]{7}$/i.test(imageHash);",
-							"",
+							"tests['Returns 15 char alhpanumeric deletehash'] = /^[a-z0-9]{15}$/i.test(imageDeleteHash);",
 							"",
 							"postman.setEnvironmentVariable('imageHash', imageHash);",
+							"postman.setEnvironmentVariable('imageDeleteHash', imageDeleteHash);",
 							"",
 							""
 						],
