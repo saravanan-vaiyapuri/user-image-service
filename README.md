@@ -17,6 +17,6 @@ H2 Console endpoint is - http://localhost:8080/h2-console/ to allow the user to 
 Following entities will be created and available in H2 database.
 ![USERS](USERS.png)
 
-![USERIMAGE](USERIMAGE.png)
+![USERTABLE](USERTABLE.png)
 
-![USERIMAGE - Sample Data](USERTABLE-data-sample.png)
+![USERTABLE - Sample Data](USERTABLE-data-sample.png)
