@@ -1,0 +1,300 @@
+{
+	"info": {
+		"_postman_id": "afad3d6f-42d9-49ac-8f4f-f00f336048a4",
+		"name": "User Registration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{userJwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{userJwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4d03c091-7dc5-4948-90ba-faae828304f7",
+						"exec": [
+							"var res = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable('userJwt', res.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"saravanan12@sarav.com\",\r\n    \"password\" : \"password3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"saravanan12@sarav.com\",\n    \"password\":\"password3\",\n    \"fullName\":\"Saravanan Vaiyapuri\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "images for given user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{userJwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/images",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "image/{id}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{userJwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/image/{{imageHash}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"image",
+						"{{imageHash}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Image Upload",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2f7914a2-fa75-4479-91fe-ebb5a677eae4",
+						"exec": [
+							"pm.environment.set(\"clientId\", \"b3c655b45780859\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "36f8bf2d-c166-4454-b1b7-eab73472d7d0",
+						"exec": [
+							"// This endpoint is critical to the test flow, ",
+							"// so this stops the request cycle if any of these tests error.",
+							"postman.setNextRequest('end');",
+							"",
+							"var res = JSON.parse(responseBody);",
+							"",
+							"var imageHash = res.id;",
+							"",
+							"tests['Returns 7 char alphanumeric id'] = /^[a-z0-9]{7}$/i.test(imageHash);",
+							"",
+							"",
+							"postman.setEnvironmentVariable('imageHash', imageHash);",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{userJwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Client-ID {{clientId}}",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"description": "image/video",
+							"type": "file",
+							"src": "/Users/v_saravanan/Desktop/Screenshot 2024-10-24 at 2.56.02 PM.png"
+						},
+						{
+							"key": "type",
+							"value": "file",
+							"description": "file, url, base64, raw",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "Simple upload DVM for 1st user",
+							"description": "The title of the content ",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "1st user 3rd image",
+							"description": "The description of the content ",
+							"type": "text"
+						}
+					],
+					"options": {
+						"formdata": {}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"upload"
+					]
+				},
+				"description": "Upload a new image or video.\n\n#### Accepted Image Formats\n\n| MIME Type |\n| --- |\n| image/jpeg |\n| image/jpg |\n| image/gif |\n| image/png |\n| image/apng |\n| image/tiff |\n\n#### Accepted Video Formats\n\n| MIME Type |\n| --- |\n| video/mp4 |\n| video/webm |\n| video/x-matroska |\n| video/quicktime |\n| video/x-flv |\n| video/x-msvideo |\n| video/x-ms-wmv |\n| video/mpeg |"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
