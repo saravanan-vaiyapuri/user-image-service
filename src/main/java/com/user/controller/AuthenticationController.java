@@ -36,9 +36,9 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUser loginUser) {
         User authenticatedUser = authenticationService.authenticate(loginUser);
-
+        //successful authentication make JWT creation and attach the valid user attributes as claims
         String jwtToken = jwtService.generateToken(authenticatedUser);
-
+        //return the JWT token as part of logon authentication
         LoginResponse loginResponse = new LoginResponse().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
 
         return ResponseEntity.ok(loginResponse);

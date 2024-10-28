@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +45,15 @@ public class ImageService {
 		this.userImageRepository = userImageRepository;
 	}
 
+	/**
+	 * 
+	 * This method is used to read Image details from H2 database for the given
+	 * image id and active session user profile
+	 * 
+	 * @param id          String
+	 * @param currentUser User
+	 * @return ResponseUserData
+	 */
 	public ResponseUserData getImage(String id, User currentUser) {
 		LOGGER.info("getImage called for id {}", id);
 
@@ -55,6 +62,8 @@ public class ImageService {
 		Image returnImage = null;
 		while (itr.hasNext()) {
 			UserImage image2 = (UserImage) itr.next();
+			// validate the image attached to the given user profile with the given image id
+			// ONLY
 			if (image2.user.getId().equals(currentUser.getId()) && image2.imageId.equals(id)) {
 				returnImage = new Image();
 				returnImage.id = image2.imageId;
@@ -75,14 +84,23 @@ public class ImageService {
 		return data;
 	}
 
+	/**
+	 * Returns all the image details from H2 database for the given active user
+	 * profile
+	 * 
+	 * @param currentUser User
+	 * @return ResponseUserData
+	 */
 	public ResponseUserData getImages(User currentUser) {
-
+		// use UserImageRepository to find/list all the user profile with their images
 		List<UserImage> findAll = userImageRepository.findAll();
+
 		Iterator<UserImage> itr = findAll.iterator();
 		Image returnImage = null;
 		ArrayList<Image> images = new ArrayList<>();
 		while (itr.hasNext()) {
 			UserImage image2 = (UserImage) itr.next();
+			// validate the images attached to the given user profile
 			if (image2.user.getId().equals(currentUser.getId())) {
 				returnImage = new Image();
 				returnImage.id = image2.imageId;
@@ -90,6 +108,7 @@ public class ImageService {
 				returnImage.link = image2.link;
 				returnImage.type = image2.type;
 				returnImage.description = image2.description;
+				// populated all the valid image details for the given user into a List
 				images.add(returnImage);
 			}
 		}
@@ -102,6 +121,19 @@ public class ImageService {
 		return data;
 	}
 
+	/**
+	 * 
+	 * This method is used to upload image using Imgur API and attach the image
+	 * details with the given active session user profile
+	 * 
+	 * @param urlImage    MultipartFile
+	 * @param type        String
+	 * @param title       String
+	 * @param description String
+	 * @param user        User
+	 * @return Image
+	 * @throws Exception
+	 */
 	public Image uploadImage(MultipartFile urlImage, String type, String title, String description, User user)
 			throws Exception {
 		RestTemplate restTemplate = new RestTemplate();
@@ -117,21 +149,21 @@ public class ImageService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		headers.add("Authorization", "Client-ID " + IMGUR_CLIENT_ID);
-		// Create the request entity
+		// Create the request entity and initiate Imgur API image Upload process
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 		ResponseEntity<ResponseData> response = restTemplate.exchange("https://api.imgur.com/3/image/", HttpMethod.POST,
 				requestEntity, ResponseData.class);
-//		System.out.println("Status: "+response.getStatusCode()+", Body: "+response.getBody());
 
+		// read the uploaded image details to return as part of Upload API response
 		Image image = new Image();
 		Data res = response.getBody().data;
-//		System.out.println(res.toString());
 		image.id = res.id;
 		image.title = res.title;
 		image.link = res.link;
 		image.type = res.type;
 		image.description = res.description;
 
+		// populate the UserImage to persist in H2 database
 		UserImage userImage = new UserImage(user);
 		userImage.link = image.link;
 		userImage.title = res.title;
@@ -139,12 +171,21 @@ public class ImageService {
 		userImage.type = res.type;
 		userImage.imageId = image.id;
 		userImage.description = res.description;
+
+		// save or attach the image details with given active session user profile
 		userImageRepository.save(userImage);
 
 		return image;
 
 	}
 
+	/**
+	 * this helps in creating File object from the given MultipartFile object
+	 * 
+	 * @param file MultipartFile
+	 * @return File
+	 * @throws java.io.IOException
+	 */
 	public File convert(MultipartFile file) throws java.io.IOException {
 		File convFile = new File(file.getOriginalFilename());
 		convFile.createNewFile();

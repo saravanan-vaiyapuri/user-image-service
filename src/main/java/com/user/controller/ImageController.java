@@ -30,30 +30,59 @@ public class ImageController {
 	@Autowired
 	private ImageService imageService;
 
+	/**
+	 * This method is used to read all images attached to the active session user
+	 * profile
+	 * 
+	 * @return ResponseUserData
+	 */
 	@GetMapping("images")
 	public ResponseUserData getImages() {
 		LOGGER.info("getImages called for current active session user");
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = (User) authentication.getPrincipal();
-		return imageService.getImages(currentUser);
+		return imageService.getImages(validateUserCredential());
 	}
 
+	/**
+	 * This method is used to read the given image details with active session user
+	 * profile
+	 * 
+	 * @param id Image Id
+	 * @return ResponseUserData
+	 */
 	@GetMapping("image/{id}")
 	public ResponseUserData getImage(@PathVariable("id") String id) {
 		LOGGER.info("getImage called for id {}", id);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = (User) authentication.getPrincipal();
-		return imageService.getImage(id, currentUser);
+		return imageService.getImage(id, validateUserCredential());
 	}
 
+	/**
+	 * 
+	 * This method defines the upload image functionality with the given user image
+	 * details and active user profile
+	 * 
+	 * @param title       String
+	 * @param type        String
+	 * @param description String
+	 * @param file        MaultiPartFile
+	 * @return Image
+	 * @throws Exception
+	 */
 	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public Image uploadFile(@RequestParam("title") String title, @RequestParam("type") String type,
 			@RequestParam("description") String description, @RequestParam("image") MultipartFile file)
 			throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = (User) authentication.getPrincipal();
 		// Process the file and form data
-		return imageService.uploadImage(file, type, title, description, currentUser);
+		return imageService.uploadImage(file, type, title, description, validateUserCredential());
 
+	}
+
+	/**
+	 * Helps the authorization header from context and return the valid user profile
+	 * 
+	 * @return User
+	 */
+	private User validateUserCredential() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return (User) authentication.getPrincipal();
 	}
 }
