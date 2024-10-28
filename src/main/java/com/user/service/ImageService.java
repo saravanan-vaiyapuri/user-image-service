@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.user.model.Data;
+import com.user.model.DeleteResponse;
 import com.user.model.Image;
 import com.user.model.ResponseData;
 import com.user.model.ResponseUserData;
@@ -108,6 +109,7 @@ public class ImageService {
 				returnImage.link = image2.link;
 				returnImage.type = image2.type;
 				returnImage.description = image2.description;
+				returnImage.deletehash = image2.deletehash;
 				// populated all the valid image details for the given user into a List
 				images.add(returnImage);
 			}
@@ -162,20 +164,47 @@ public class ImageService {
 		image.link = res.link;
 		image.type = res.type;
 		image.description = res.description;
-
+		image.deletehash = res.deletehash;
 		// populate the UserImage to persist in H2 database
 		UserImage userImage = new UserImage(user);
 		userImage.link = image.link;
 		userImage.title = res.title;
-		userImage.link = res.link;
 		userImage.type = res.type;
 		userImage.imageId = image.id;
 		userImage.description = res.description;
-
+		userImage.deletehash = res.deletehash;
 		// save or attach the image details with given active session user profile
 		userImageRepository.save(userImage);
 
 		return image;
+
+	}
+
+	/**
+	 * 
+	 * This method is used to delete image using Imgur API and detach the image
+	 * details with the given active session user profile
+	 * 
+	 * @param id          String
+	 * @param currentUser User
+	 * @return String
+	 * @throws Exception
+	 */
+	public String deleteImage(String idTobeDeleted, String imageId, User currentUser) throws Exception {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Client-ID " + IMGUR_CLIENT_ID);
+		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+		ResponseEntity<DeleteResponse> response = restTemplate.exchange("https://api.imgur.com/3/image/" + idTobeDeleted,
+				HttpMethod.DELETE, entity, DeleteResponse.class);
+		String returnMessage = "Delete failed";
+		if (response.getBody().data) {
+			//delete or detach the image details with given active session user profile
+			UserImage userImage=userImageRepository.findByImageId(imageId);
+			userImageRepository.delete(userImage);
+			returnMessage = "Successfully deleted image reference from given user profile";
+		}
+		return returnMessage;
 
 	}
 

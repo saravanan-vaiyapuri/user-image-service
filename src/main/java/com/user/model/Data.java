@@ -26,6 +26,8 @@ public class Data {
 	public ArrayList<Image> images;
 	@JsonProperty("description")
 	public String description;
+	@JsonProperty("deletehash")
+	public String deletehash;
 	  @Override
 	  public String toString() {
 	    return "Data [id=" + id + ", link=" + link + ", type=" + type + ", title=" + title + "]";

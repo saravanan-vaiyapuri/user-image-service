@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,6 +77,20 @@ public class ImageController {
 
 	}
 
+	/**
+	 * This method is used to read the given image details with active session user
+	 * profile
+	 * 
+	 * @param id Image Id
+	 * @return String
+	 * @throws Exception 
+	 */
+	@DeleteMapping("image/{id}/{imageid}")
+	public String deleteImage(@PathVariable("id") String id, @PathVariable("imageid") String imageid) throws Exception {
+		LOGGER.info("getImage called for id {}", id);
+		return imageService.deleteImage(id, imageid, validateUserCredential());
+	}
+	
 	/**
 	 * Helps the authorization header from context and return the valid user profile
 	 * 

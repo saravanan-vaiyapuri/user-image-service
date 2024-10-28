@@ -39,6 +39,8 @@ public class UserImage implements UserDetails {
 	public String imageId;
 	@JsonProperty("description")
 	public String description;
+	@JsonProperty("deletehash")
+	public String deletehash;
 	@ManyToOne
 	@JoinColumn(name = "userid")
 	public User user;

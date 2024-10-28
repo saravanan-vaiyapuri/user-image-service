@@ -26,6 +26,8 @@ public class Image implements Serializable {
 	public String title;
   @JsonProperty("description")
 	public String description;
+	@JsonProperty("deletehash")
+	public String deletehash;
   @Override
   public String toString() {
     return "Image [id=" + id + ", link=" + link + ", type=" + type + ", title=" + title + "]";
