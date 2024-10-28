@@ -15,7 +15,7 @@ Postman collection is available to run all of the endpoints and explore the comp
 H2 Console endpoint is - http://localhost:8080/h2-console/ to allow the user to review the created user profiles and uploaded images against the user.
 
 Following entities will be created and available in H2 database.
-USERS
+![USERS](USERS.png)
 
 FIELD  	TYPE  	NULL  	KEY  	DEFAULT  
 ID	INTEGER	NO	PRI	NULL
