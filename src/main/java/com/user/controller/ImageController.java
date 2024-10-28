@@ -18,36 +18,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * This controller is used to Image upload, view and read all the images
+ * attached to an active session user
+ */
 @RestController
 public class ImageController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ImageController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImageController.class);
 
-  @Autowired
-  private ImageService imageService;
+	@Autowired
+	private ImageService imageService;
 
-  @GetMapping("images")
-  public ResponseUserData getImages() {
-    LOGGER.info("getImages called for current active session user");
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User currentUser = (User) authentication.getPrincipal();
-    return imageService.getImages(currentUser);
-  }
+	@GetMapping("images")
+	public ResponseUserData getImages() {
+		LOGGER.info("getImages called for current active session user");
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = (User) authentication.getPrincipal();
+		return imageService.getImages(currentUser);
+	}
 
-  @GetMapping("image/{id}")
-  public ResponseUserData getImage(@PathVariable("id") String id) {
-    LOGGER.info("getImage called for id {}", id);
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User currentUser = (User) authentication.getPrincipal();
-    return imageService.getImage(id,currentUser);
-  }
-  
-  @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public Image uploadFile(@RequestParam("title") String title, @RequestParam("type") String type,@RequestParam("description") String description,@RequestParam("image") MultipartFile file ) throws Exception {
-	  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    User currentUser = (User) authentication.getPrincipal();
-	  // Process the file and form data
-	  return imageService.uploadImage(file,type,title,description,currentUser);
-     
-  }
+	@GetMapping("image/{id}")
+	public ResponseUserData getImage(@PathVariable("id") String id) {
+		LOGGER.info("getImage called for id {}", id);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = (User) authentication.getPrincipal();
+		return imageService.getImage(id, currentUser);
+	}
+
+	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public Image uploadFile(@RequestParam("title") String title, @RequestParam("type") String type,
+			@RequestParam("description") String description, @RequestParam("image") MultipartFile file)
+			throws Exception {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = (User) authentication.getPrincipal();
+		// Process the file and form data
+		return imageService.uploadImage(file, type, title, description, currentUser);
+
+	}
 }

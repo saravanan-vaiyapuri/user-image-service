@@ -1,4 +1,4 @@
-package com.user.model;
+package com.user.exception;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;

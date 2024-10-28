@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * This provides an ability to read the use profile information on the active user session
+ */
 @RequestMapping("/users")
 @RestController
 public class UserController {

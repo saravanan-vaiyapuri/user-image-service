@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This provides ability to do the  User profile registration and authentication 
+ */
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;

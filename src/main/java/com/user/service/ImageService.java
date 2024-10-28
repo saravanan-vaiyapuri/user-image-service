@@ -30,6 +30,10 @@ import com.user.model.User;
 import com.user.model.UserImage;
 import com.user.repository.UserImageRepository;
 
+/**
+ * This provides an ability to interact with User Image upload/view using Imgur
+ * API integrations
+ */
 @Service
 public class ImageService {
 
@@ -46,20 +50,6 @@ public class ImageService {
 	public ResponseUserData getImage(String id, User currentUser) {
 		LOGGER.info("getImage called for id {}", id);
 
-		/*RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Client-ID " + IMGUR_CLIENT_ID);
-		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-		ResponseEntity<ResponseData> response = restTemplate.exchange("https://api.imgur.com/3/image/ARAYIxu",
-				HttpMethod.GET, entity, ResponseData.class);
-//		System.out.println(response.getBody().toString());
-		Image image = new Image();
-		Data res = response.getBody().data;
-		//System.out.println(res.toString());
-		image.id = res.id;
-		image.title = res.title;
-		image.link = res.link;
-		image.type = res.type;*/
 		List<UserImage> findAll = userImageRepository.findAll();
 		Iterator<UserImage> itr = findAll.iterator();
 		Image returnImage = null;
@@ -74,7 +64,7 @@ public class ImageService {
 				returnImage.description = image2.description;
 			}
 		}
-		
+
 		ResponseUserData data = new ResponseUserData();
 		data.status = "200";
 		data.success = "true";
@@ -86,22 +76,7 @@ public class ImageService {
 	}
 
 	public ResponseUserData getImages(User currentUser) {
-		
 
-		/*RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Client-ID " + IMGUR_CLIENT_ID);
-		HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-		ResponseEntity<ResponseData> response = restTemplate.exchange("https://api.imgur.com/3/image/ARAYIxu",
-				HttpMethod.GET, entity, ResponseData.class);
-//		System.out.println(response.getBody().toString());
-		Image image = new Image();
-		Data res = response.getBody().data;
-		//System.out.println(res.toString());
-		image.id = res.id;
-		image.title = res.title;
-		image.link = res.link;
-		image.type = res.type;*/
 		List<UserImage> findAll = userImageRepository.findAll();
 		Iterator<UserImage> itr = findAll.iterator();
 		Image returnImage = null;
@@ -118,7 +93,7 @@ public class ImageService {
 				images.add(returnImage);
 			}
 		}
-		
+
 		ResponseUserData data = new ResponseUserData();
 		data.status = "200";
 		data.success = "true";
@@ -127,16 +102,17 @@ public class ImageService {
 		return data;
 	}
 
-	public Image uploadImage(MultipartFile urlImage, String type, String title, String description,User user) throws Exception {
+	public Image uploadImage(MultipartFile urlImage, String type, String title, String description, User user)
+			throws Exception {
 		RestTemplate restTemplate = new RestTemplate();
-		
+
 		// Create the form data
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 		body.add("type", type);
 		body.add("title", title);
 		body.add("description", description);
 		body.add("image", new FileSystemResource(convert(urlImage)));
-	
+
 		// Set the headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -146,7 +122,7 @@ public class ImageService {
 		ResponseEntity<ResponseData> response = restTemplate.exchange("https://api.imgur.com/3/image/", HttpMethod.POST,
 				requestEntity, ResponseData.class);
 //		System.out.println("Status: "+response.getStatusCode()+", Body: "+response.getBody());
-		
+
 		Image image = new Image();
 		Data res = response.getBody().data;
 //		System.out.println(res.toString());
